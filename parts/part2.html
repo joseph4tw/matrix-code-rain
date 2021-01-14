@@ -21,7 +21,18 @@
 </head>
 <body>
 <script>
-// code goes here
+// first, lets get the canvas up and running
+const svg = d3.select('body')
+  .append('svg')
+  .attr('class', 'container');
+
+// now, let's pick an arbitrary spot to put a letter in
+const letter = svg.append('text')
+  .attr('class', 'letter')
+  .attr('fill', '#dfdfdf')
+  .attr('x', 100)
+  .attr('y', 100)
+  .text('a');
 </script>
 </body>
 </html>
