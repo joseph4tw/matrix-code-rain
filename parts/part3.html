@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body {
+    margin: 0;
+    background-color: #0D0208;
+  }
+
+  .container {
+    background-color: #0D0208;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .letter {
+    font-size: 2em;
+  }
+</style>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+<body>
+<script>
+// first, lets get the canvas up and running
+const svg = d3.select('body')
+  .append('svg')
+  .attr('class', 'container');
+
+// now, let's pick an arbitrary spot to put a letter in
+const letter = svg.append('text')
+  .attr('class', 'letter')
+  .attr('fill', '#dfdfdf')
+  .attr('text-anchor', 'middle')
+  .attr('x', 100)
+  .attr('y', 100)
+  .text('a');
+
+const lineX = svg.append('line')
+  .attr('stroke', '#ee0000')
+  .attr('x1', 100)
+  .attr('x2', 100)
+  .attr('y1', 0)
+  .attr('y2', 100);
+
+const lineY = svg.append('line')
+  .attr('stroke', '#ee0000')
+  .attr('x1', 0)
+  .attr('x2', 100)
+  .attr('y1', 100)
+  .attr('y2', 100);
+</script>
+</body>
+</html>
