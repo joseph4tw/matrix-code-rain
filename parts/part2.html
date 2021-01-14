@@ -33,6 +33,20 @@ const letter = svg.append('text')
   .attr('x', 100)
   .attr('y', 100)
   .text('a');
+
+const lineX = svg.append('line')
+  .attr('stroke', '#ee0000')
+  .attr('x1', 100)
+  .attr('x2', 100)
+  .attr('y1', 0)
+  .attr('y2', 100);
+
+const lineY = svg.append('line')
+  .attr('stroke', '#ee0000')
+  .attr('x1', 0)
+  .attr('x2', 100)
+  .attr('y1', 100)
+  .attr('y2', 100);
 </script>
 </body>
 </html>
