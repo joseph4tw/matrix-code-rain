@@ -21,26 +21,32 @@
 </head>
 <body>
 <script>
-// start with 0 - 9
-const charMap = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57];
+const getCharacterSet = () => {
+  // start with 0 - 9
+  const characters = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57];
 
-// Hiragana
-// 3041— 309F
-const hiraganaMin = parseInt('3041', 16);
-const hiraganaMax = parseInt('309F', 16);
+  // Hiragana
+  // 3041— 309F
+  const hiraganaMin = parseInt('3041', 16);
+  const hiraganaMax = parseInt('309F', 16);
 
-for (let i = hiraganaMin; i <= hiraganaMax; i++) {
-  charMap.push(i);
-}
+  for (let i = hiraganaMin; i <= hiraganaMax; i++) {
+    characters.push(i);
+  }
 
-// Katakana
-// 30A0— 30FF
-const katakanaMin = parseInt('30A0', 16);
-const katakanaMax = parseInt('30FF', 16);
+  // Katakana
+  // 30A0— 30FF
+  const katakanaMin = parseInt('30A0', 16);
+  const katakanaMax = parseInt('30FF', 16);
 
-for (let i = katakanaMin; i <= katakanaMax; i++) {
-  charMap.push(i);
-}
+  for (let i = katakanaMin; i <= katakanaMax; i++) {
+    characters.push(i);
+  }
+
+  return characters;
+};
+
+const charMap = getCharacterSet();
 
 const getRandomCharacter = () => {
   const index = Math.floor(Math.random() * (charMap.length - 1));
