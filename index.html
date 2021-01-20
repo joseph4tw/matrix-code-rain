@@ -64,7 +64,7 @@ const charSize = {
 
 let svgSize = svg.node().getBoundingClientRect();
 let maxVisibleChars = (svgSize.width * svgSize.height) / (charSize.width * charSize.height);
-let maxVisibleCharsAllowed = Math.floor(maxVisibleChars * 0.50);
+let maxVisibleCharsAllowed = Math.floor(maxVisibleChars * 0.70);
 
 const getHorizontalSlots = () => {
   return Math.ceil(svgSize.width / charSize.width);

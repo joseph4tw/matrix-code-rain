@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body {
+    margin: 0;
+    background-color: #0D0208;
+  }
+
+  .container {
+    background-color: #0D0208;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .letter {
+    font-size: 2em;
+  }
+</style>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+<body>
+<script>
+// part 7 - mirror text - fixing the position
+
+// first, lets get the canvas up and running
+const svg = d3.select('body')
+  .append('svg')
+  .attr('class', 'container');
+
+const getCharacterSet = () => {
+  // start with 0 - 9
+  const characters = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57];
+
+  // Hiragana
+  // 3041— 309F
+  const hiraganaMin = parseInt('3041', 16);
+  const hiraganaMax = parseInt('309F', 16);
+
+  for (let i = hiraganaMin; i <= hiraganaMax; i++) {
+    characters.push(i);
+  }
+
+  // Katakana
+  // 30A0— 30FF
+  const katakanaMin = parseInt('30A0', 16);
+  const katakanaMax = parseInt('30FF', 16);
+
+  for (let i = katakanaMin; i <= katakanaMax; i++) {
+    characters.push(i);
+  }
+
+  return characters;
+};
+
+const charMap = getCharacterSet();
+
+const getRandomCharacter = () => {
+  const index = Math.floor(Math.random() * (charMap.length - 1));
+  return String.fromCodePoint(charMap[index]);
+};
+
+// now, let's pick an arbitrary spot to put a letter in
+const letter = svg.append('text')
+  .attr('class', 'letter')
+  .attr('fill', '#dfdfdf')
+  .attr('text-anchor', 'middle')
+  .attr('transform', 'scale(-1, 1)')
+  .attr('x', -100) // changed from 100 to -100
+  .attr('y', 100)
+  .text(getRandomCharacter());
+
+const lineX = svg.append('line')
+  .attr('stroke', '#ee0000')
+  .attr('x1', 100)
+  .attr('x2', 100)
+  .attr('y1', 0)
+  .attr('y2', 100);
+
+const lineY = svg.append('line')
+  .attr('stroke', '#ee0000')
+  .attr('x1', 0)
+  .attr('x2', 100)
+  .attr('y1', 100)
+  .attr('y2', 100);
+</script>
+</body>
+</html>
