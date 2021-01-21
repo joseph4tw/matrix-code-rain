@@ -60,29 +60,47 @@ const getRandomCharacter = () => {
   return String.fromCodePoint(charMap[index]);
 };
 
-// now, let's pick an arbitrary spot to put a letter in
-const letter = svg.append('text')
-  .attr('class', 'letter')
-  .attr('fill', '#dfdfdf')
-  .attr('text-anchor', 'middle')
-  .attr('transform', 'scale(-1, 1)')
-  .attr('x', -100) // changed from 100 to -100
-  .attr('y', 100)
-  .text(getRandomCharacter());
+let svgSize = svg.node().getBoundingClientRect();
 
-const lineX = svg.append('line')
-  .attr('stroke', '#ee0000')
-  .attr('x1', 100)
-  .attr('x2', 100)
-  .attr('y1', 0)
-  .attr('y2', 100);
+const charSize = {
+  width: 32,
+  height: 32,
+};
 
-const lineY = svg.append('line')
-  .attr('stroke', '#ee0000')
-  .attr('x1', 0)
-  .attr('x2', 100)
-  .attr('y1', 100)
-  .attr('y2', 100);
+const getMatrix = () => {
+  let columns = Math.ceil(svgSize.width / charSize.width);
+  let rows = Math.ceil(svgSize.height / charSize.height);
+  const matrix = [];
+
+  for (let column = 0; column < columns; column++) {
+    matrix[column] = [];
+    let columnPosition = column * charSize.width;
+
+    for (let row = 0; row < rows; row++) {
+      let rowPosition = row * charSize.height;
+      matrix[column][row] = {
+        x: columnPosition,
+        y: rowPosition,
+      };
+    }
+  }
+
+  return matrix;
+};
+
+let matrix = getMatrix();
+
+for(let column = 0; column < matrix.length; column++) {
+  for (let row = 0; row < matrix[column].length; row++) {
+    let position = matrix[column][row];
+    svg.append('rect')
+      .attr('stroke', '#c00')
+      .attr('x', position.x)
+      .attr('y', position.y)
+      .attr('width', charSize.width)
+      .attr('height', charSize.height);
+  }
+}
 </script>
 </body>
 </html>
