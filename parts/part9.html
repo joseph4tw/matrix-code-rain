@@ -21,7 +21,7 @@
 </head>
 <body>
 <script>
-// part 8 - defining the matrix
+// part 9 - add letters to the matrix grid
 
 // first, lets get the canvas up and running
 const svg = d3.select('body')
@@ -99,6 +99,16 @@ for(let column = 0; column < matrix.length; column++) {
       .attr('y', position.y)
       .attr('width', charSize.width)
       .attr('height', charSize.height);
+
+    svg.append('text')
+      .attr('class', 'letter')
+      .attr('fill', '#dfdfdf')
+      .attr('text-anchor', 'middle')
+      .attr('dominant-baseline', 'text-before-edge')
+      .attr('transform', 'scale(-1, 1)')
+      .attr('x', -position.x - (charSize.width / 2))
+      .attr('y', position.y)
+      .text(getRandomCharacter());
   }
 }
 </script>

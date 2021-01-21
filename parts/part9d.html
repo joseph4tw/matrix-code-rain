@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body {
+    margin: 0;
+    background-color: #0D0208;
+  }
+
+  .container {
+    background-color: #0D0208;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .letter {
+    font-size: 2em;
+  }
+</style>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+<body>
+<script>
+// part 9d - dominant-baseline for text
+const svg = d3.select('body')
+  .append('svg')
+  .attr('class', 'container');
+
+svg.append('rect')
+  .attr('stroke', '#d00')
+  .attr('x', 100)
+  .attr('y', 100)
+  .attr('width', 32)
+  .attr('height', 37);
+
+svg.append('text')
+  .attr('class', 'letter')
+  .attr('fill', '#dfdfdf')
+  .attr('transform', 'scale(-1, 1)')
+  .attr('text-anchor', 'middle')
+  .attr('dominant-baseline', 'text-before-edge') // added
+  .attr('x', -100 - (32 / 2))
+  .attr('y', 100)
+  .text('R');
+</script>
+</body>
+</html>
