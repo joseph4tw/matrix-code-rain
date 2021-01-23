@@ -21,9 +21,7 @@
 </head>
 <body>
 <script>
-// part 9 - add letters to the matrix grid
-
-// first, lets get the canvas up and running
+// part 10c - make it rain - safeguard against large DOMs
 const svg = d3.select('body')
   .append('svg')
   .attr('class', 'container');
@@ -90,17 +88,16 @@ const getMatrix = () => {
 
 let matrix = getMatrix();
 
-for(let column = 0; column < matrix.length; column++) {
-  for (let row = 0; row < matrix[column].length; row++) {
-    const position = matrix[column][row];
-    svg.append('rect')
-      .attr('stroke', '#c00')
-      .attr('x', position.x)
-      .attr('y', position.y)
-      .attr('width', charSize.width)
-      .attr('height', charSize.height);
+const shuffle = (array) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+};
 
-    svg.append('text')
+const placeText = (character, position) => {
+    const letter = svg.append('text')
       .attr('class', 'letter')
       .attr('fill', '#dfdfdf')
       .attr('text-anchor', 'middle')
@@ -108,9 +105,65 @@ for(let column = 0; column < matrix.length; column++) {
       .attr('transform', 'scale(-1, 1)')
       .attr('x', -position.x - (charSize.width / 2))
       .attr('y', position.y)
-      .text(getRandomCharacter());
+      .text(character);
+
+    d3.timeout(() => letter.remove(), Math.floor(Math.random() * 5000) + 2000);
+};
+
+const rainDrop = () => {
+  // get the matrix column indices as an array of strings to shuffle
+  let shuffledColumns = Object.keys(matrix);
+  shuffle(shuffledColumns);
+  let shuffledIndex = 0;
+
+  let column = shuffledColumns[shuffledIndex];
+  let row = 0;
+
+  // return a function which, when run, places the text in the next
+  // spot until it finishes
+  return () => {
+    const char = getRandomCharacter();
+    const position = matrix[column][row];
+    placeText(char, position);
+    row++;
+
+    // if we went through all of the rows, pick a new column
+    // and start over
+    if (row >= matrix[column].length) {
+      shuffledIndex++;
+
+      // if we went through all columns, shuffle them again
+      if (shuffledIndex >= shuffledColumns.length) {
+        shuffle(shuffledColumns);
+        shuffledIndex = 0;
+      }
+
+      // pick the next column and reset the row
+      column = shuffledColumns[shuffledIndex];
+      row = 0;
+    }
+  };
+};
+
+const removeExtraTextElements = () => {
+  const maxVisibleChars = (svgSize.width * svgSize.height) / (charSize.width * charSize.height);
+  const maxVisibleCharsAllowed = Math.floor(maxVisibleChars * 0.70);
+
+  const elements = document.getElementsByTagName('text');
+  const leftoverDomCount = elements.length - maxVisibleCharsAllowed;
+
+  if (leftoverDomCount > 0) {
+    console.log(`extra elements found - ${leftoverDomCount}`);
+    for (let i = 0; i < leftoverDomCount; i++) {
+        elements[i].remove();
+    }
   }
-}
+};
+
+d3.interval(removeExtraTextElements, 500);
+
+const rainDrop1 = rainDrop();
+d3.interval(rainDrop1, 50);
 </script>
 </body>
 </html>

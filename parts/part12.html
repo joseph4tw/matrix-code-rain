@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body {
+    margin: 0;
+    background-color: #0D0208;
+  }
+
+  .container {
+    background-color: #0D0208;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .letter {
+    font-size: 2em;
+  }
+</style>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+<body>
+<script>
+// part 12 - cleanup
+const colors = {
+  superBrightGreen: '#E6FFEC',
+  brightGreen: '#00FF41',
+  green: '#008F11',
+  darkGreen: '#003B00',
+  superDarkGreen: '#002300',
+};
+
+const getCharacterSet = () => {
+  // start with 0 - 9
+  const characters = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57];
+
+  // Hiragana
+  // 3041— 309F
+  const hiraganaMin = parseInt('3041', 16);
+  const hiraganaMax = parseInt('309F', 16);
+
+  for (let i = hiraganaMin; i <= hiraganaMax; i++) {
+    characters.push(i);
+  }
+
+  // Katakana
+  // 30A0— 30FF
+  const katakanaMin = parseInt('30A0', 16);
+  const katakanaMax = parseInt('30FF', 16);
+
+  for (let i = katakanaMin; i <= katakanaMax; i++) {
+    characters.push(i);
+  }
+
+  return characters;
+};
+
+const svg = d3.select('body')
+  .append('svg')
+  .attr('class', 'container');
+
+let svgSize = svg.node().getBoundingClientRect();
+
+const charSize = {
+  width: 32,
+  height: 37,
+};
+
+const charMap = getCharacterSet();
+
+const getRandomCharacter = () => {
+  const index = Math.floor(Math.random() * (charMap.length - 1));
+  return String.fromCodePoint(charMap[index]);
+};
+
+const shuffle = (array) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+};
+
+const placeText = (character, position) => {
+  const letter = svg.append('text')
+    .attr('class', 'letter')
+    .attr('fill', colors.superBrightGreen)
+    .attr('opacity', 1)
+    .attr('text-anchor', 'middle')
+    .attr('dominant-baseline', 'text-before-edge')
+    .attr('transform', 'scale(-1, 1)')
+    .attr('x', -position.x - (charSize.width / 2))
+    .attr('y', position.y)
+    .text(character);
+
+  return letter;
+};
+
+const animateText = (letter) => {
+  letter
+    .transition()
+      .duration(100)
+      .attr('fill', colors.brightGreen)
+    .transition()
+      .duration(10)
+      .attr('fill', colors.green);
+
+  d3.timeout(() => {
+    letter.transition()
+      .duration(750)
+      .attr('fill', colors.darkGreen);
+  }, Math.floor(Math.random() * 3000));
+
+  d3.timeout(() => {
+    letter.transition()
+      .duration(750)
+      .attr('fill', colors.superDarkGreen);
+  }, Math.floor(Math.random() * 4000));
+
+  d3.timeout(() => {
+    letter.transition()
+      .duration(750)
+      .attr('opacity', 0)
+      .remove();
+  }, Math.floor(Math.random() * 10000));
+};
+
+const getMatrix = () => {
+  let columns = Math.ceil(svgSize.width / charSize.width);
+  let rows = Math.ceil(svgSize.height / charSize.height);
+  const matrix = [];
+
+  for (let column = 0; column < columns; column++) {
+    matrix[column] = [];
+    let columnPosition = column * charSize.width;
+
+    for (let row = 0; row < rows; row++) {
+      let rowPosition = row * charSize.height;
+      matrix[column][row] = {
+        x: columnPosition,
+        y: rowPosition,
+      };
+    }
+  }
+
+  return matrix;
+};
+
+let matrix = getMatrix();
+
+const rainDrop = () => {
+  // get the matrix column indices as an array of strings to shuffle
+  let shuffledColumns = Object.keys(matrix);
+  shuffle(shuffledColumns);
+  let shuffledIndex = 0;
+
+  let column = shuffledColumns[shuffledIndex];
+  const getRandomStartingRow = () => {
+    const maxRows = matrix[0].length;
+    return Math.floor(Math.random() * Math.ceil(maxRows * 0.3));
+  };
+
+  let row = getRandomStartingRow();
+
+  // return a function which, when run, places the text in the next
+  // spot until it finishes
+  return () => {
+    const char = getRandomCharacter();
+    const position = matrix[column][row];
+    const letter = placeText(char, position);
+    animateText(letter);
+    row++;
+
+    // if we went through all of the rows, pick a new column
+    // and start over
+    if (row >= matrix[column].length) {
+      shuffledIndex++;
+
+      // if we went through all columns, shuffle them again
+      if (shuffledIndex >= shuffledColumns.length) {
+        shuffle(shuffledColumns);
+        shuffledIndex = 0;
+      }
+
+      // pick the next column and reset the row
+      column = shuffledColumns[shuffledIndex];
+      row = getRandomStartingRow();
+    }
+  };
+};
+
+const removeExtraTextElements = () => {
+  const maxVisibleChars = (svgSize.width * svgSize.height) / (charSize.width * charSize.height);
+  const maxVisibleCharsAllowed = Math.floor(maxVisibleChars * 0.70);
+
+  const elements = document.getElementsByTagName('text');
+  const leftoverDomCount = elements.length - maxVisibleCharsAllowed;
+
+  if (leftoverDomCount > 0) {
+    console.log(`extra elements found - ${leftoverDomCount}`);
+    for (let i = 0; i < leftoverDomCount; i++) {
+        elements[i].remove();
+    }
+  }
+};
+
+d3.interval(removeExtraTextElements, 500);
+
+const rainDrop1 = rainDrop();
+const rainDrop2 = rainDrop();
+const rainDrop3 = rainDrop();
+
+d3.interval(rainDrop1, Math.floor(100 + Math.random() * 50));
+d3.interval(rainDrop2, Math.floor(100 + Math.random() * 100));
+d3.interval(rainDrop3, Math.floor(100 + Math.random() * 150));
+</script>
+</body>
+</html>
